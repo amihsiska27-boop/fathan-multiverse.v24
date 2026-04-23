@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FATHAN MULTIVERSE OS v13.0</title>
+    <style>
+        :root { --green: #00ff41; --red: #ff0000; --blue: #00d4ff; --dark: #050505; --yellow: #ffea00; }
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--dark); font-family: 'Courier New', monospace; color: var(--green); overflow: hidden; }
+        
+        .scroll-area { 
+            position: absolute; top: 35px; bottom: 40px; width: 100%; overflow-y: auto; scrollbar-width: none;
+            display: flex; flex-direction: column; align-items: center;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, #050505 90%), 
+                        url('https://images.alphacoders.com/153/153921.jpg') center/cover fixed;
+        }
+
+        .content-container { width: 92%; max-width: 800px; padding: 20px 0; }
+
+        /* Tools Header */
+        .top-tools { display: flex; justify-content: space-between; width: 100%; margin-bottom: 15px; }
+        .tool-btn { cursor:pointer; width: 45px; height: 45px; border: 1px solid var(--blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); font-size: 20px; }
+        
+        /* Search Bar */
+        .search-container { width: 100%; margin-bottom: 20px; }
+        .search-container input { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid var(--blue); background: rgba(0,0,0,0.8); color: white; outline: none; box-sizing: border-box; }
+        
+        /* App Shortcuts */
+        .shortcut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
+        .app-btn { background: rgba(0,0,0,0.8); border: 1px solid var(--blue); color: #fff; padding: 12px 5px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; text-align: center; cursor: pointer; }
+
+        /* Cards & Quotes */
+        .card { background: rgba(0, 0, 0, 0.9); border: 1px solid var(--green); padding: 15px; border-radius: 10px; margin-bottom: 12px; width: 100%; box-sizing: border-box; }
+        .info-line { margin: 5px 0; font-size: 0.85rem; color: #ccc; }
+        .info-line b { color: var(--green); }
+
+        .fathan-quotes { 
+            background: rgba(0, 255, 65, 0.1); border: 2px dashed var(--green); padding: 18px; border-radius: 10px; text-align: center; margin-bottom: 15px; 
+        }
+        .fathan-quotes p { margin: 0; color: #fff; font-size: 0.95rem; font-weight: bold; font-style: italic; line-height: 1.4; }
+
+        /* Calculator & Easter Egg */
+        #calc-ui { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 3000; justify-content: center; align-items: center; }
+        .calc-box { background: #111; border: 2px solid var(--blue); padding: 20px; border-radius: 15px; width: 280px; }
+        .calc-screen { width: 100%; height: 50px; background: #000; border: 1px solid var(--blue); color: var(--blue); text-align: right; padding: 10px; font-size: 1.5rem; margin-bottom: 10px; box-sizing: border-box; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .calc-grid button { padding: 15px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; cursor: pointer; }
+        
+        #easter-egg { display: none; color: white; text-align: left; }
+        .stat-bar { height: 8px; background: #333; border-radius: 4px; margin: 8px 0; overflow: hidden; }
+        .stat-fill { height: 100%; background: var(--blue); width: 95%; }
+
+        /* Vault 251 */
+        #vault { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; padding: 30px 20px; box-sizing: border-box; border: 5px solid var(--red); overflow-y: auto; }
+        .vault-header h2 { color: var(--red); font-size: 2rem; margin: 0; font-weight: 900; text-align: center; text-transform: uppercase; }
+
+        .marquee-top { position: fixed; top: 0; width: 100%; background: var(--yellow); color: black; padding: 6px 0; font-weight: bold; z-index: 1000; font-size: 11px; }
+        .marquee-bottom { position: fixed; bottom: 0; width: 100%; background: var(--red); color: white; padding: 8px 0; font-weight: bold; z-index: 1000; font-size: 12px; border-top: 2px solid white; }
+    </style>
+</head>
+<body onload="initOS();">
+
+    <div class="marquee-top">
+        <marquee scrollamount="8">⚡ FATHAN MULTIVERSE // ALLIANCE SINCE 2021 // TASIKMALAYA // FOCUS ON STUDY 🚀</marquee>
+    </div>
+
+    <div class="scroll-area">
+        <div class="content-container">
+            <div class="top-tools">
+                <div class="tool-btn" onclick="toggleCalc()">🧮</div>
+                <div id="radar" class="tool-btn" style="border-color: var(--red);" onclick="openVault()">🕷️</div>
+            </div>
+
+            <h1 style="color: white; font-size: 1.4rem; text-shadow: 0 0 15px var(--blue); text-align: center; margin-bottom: 15px;">FATHAN MULTIVERSE</h1>
+
+            <div class="search-container">
+                <form action="https://www.google.com/search" method="GET">
+                    <input type="text" name="q" placeholder="Cari di Google...">
+                </form>
+            </div>
+
+            <div class="shortcut-grid">
+                <div class="app-btn" onclick="location.href='intent://#Intent;scheme=whatsapp;package=com.whatsapp;end'">WHATSAPP</div>
+                <div class="app-btn" onclick="location.href='intent://#Intent;package=com.roblox.client;end'">ROBLOX</div>
+                <div class="app-btn" onclick="location.href='intent://#Intent;scheme=youtube;package=com.google.android.youtube;end'">YOUTUBE</div>
+            </div>
+
+            <div class="fathan-quotes">
+                <p>"Jangan terlalu memikirkan masalah, tanpa melupakan masalah tersebut."</p>
+            </div>
+
+            <div class="card">
+                <div class="info-line">USER: <b>Muhammad Fathan Al Ghifari</b></div>
+                <div class="info-line">AGE: <b id="f-age">--</b> | LEVEL: <b>6 SD</b></div>
+                <div class="info-line">DOMISILI: <b>Tasikmalaya</b></div>
+                <div class="info-line">STATUS: <b style="color:var(--yellow)">Fokus Belajar Ujian</b></div>
+            </div>
+
+            <div class="card" style="background: rgba(255,0,0,0.1); border-color: var(--red); text-align: center;">
+                <p style="margin:0; font-size: 0.8rem; color: #fff;">"Bumi itu bulat, kita pasti bertemu lagi." — Gai Kurenai</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="calc-ui">
+        <div class="calc-box">
+            <div id="calc-group">
+                <div class="calc-screen" id="screen">0</div>
+                <div class="calc-grid">
+                    <button onclick="clearCalc()">C</button><button onclick="press('/')">/</button><button onclick="press('*')">X</button><button onclick="backspace()">←</button>
+                    <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button><button onclick="press('-')">-</button>
+                    <button onclick="calculate()" style="grid-row: span 3; background: var(--blue); color: black;">=</button>
+                    <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+                    <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+                    <button onclick="press('0')" style="grid-column: span 2;">0</button><button onclick="press('.')">.</button><button onclick="press('+')">+</button>
+                </div>
+                <button onclick="toggleCalc()" style="width:100%; margin-top:10px; background:none; color:white; border:1px solid #333;">KEMBALI</button>
+            </div>
+
+            <div id="easter-egg">
+                <h3 style="color:var(--blue); margin:0;">IDENTITY VERIFIED</h3>
+                <p style="font-size: 0.8rem; margin: 5px 0;">Fathan | Born: 27 April 2014</p>
+                <hr style="border:0.5px solid #333;">
+                <p style="font-size: 0.7rem; color:var(--blue); font-weight:bold;">PETER PARKER PROTOCOL:</p>
+                <p style="font-size: 0.7rem; line-height:1.4; font-style:italic;">
+                    "I will focus on becoming more mature. I will be quiet, not childish, and study hard for my future."
+                </p>
+                <div class="stat-bar"><div class="stat-fill"></div></div>
+                <button onclick="toggleCalc()" style="width:100%; padding:10px; margin-top:15px; background:var(--blue); color:black; font-weight:bold; border:none; border-radius:5px;">EXIT PROTOCOL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="vault">
+        <div class="vault-header"><h2>TRIO FASEBIL</h2></div>
+        <div class="card" style="border-color: var(--red); text-align: center; margin-top: 20px;">
+            <div style="color: white; font-size: 1.1rem; font-weight: bold;">Fathan • Shepia • Nabil</div>
+            <div id="timer-days" style="color: var(--yellow); font-size: 0.9rem; margin: 10px 0;"></div>
+            <div style="font-size: 0.7rem; color: #888;">Days of Alliance Since 2021</div>
+        </div>
+        <div class="card" style="font-style: italic; font-size: 0.85rem; color: #ccc; line-height:1.5;">
+            "Sebentar lagi kita akan lulus kelas 6 dan mau ujian. Kita akan SMP dan pisah sekolah. Nabil masih dekat, tapi Shepia jauh. Semoga kita bisa bertemu kembali suatu hari nanti."
+        </div>
+        <button onclick="document.getElementById('vault').style.display='none'" style="width:100%; padding:15px; background:var(--red); color:white; border:none; border-radius:8px; font-weight:bold; margin-top: 30px;">TUTUP RUANG RAHASIA</button>
+    </div>
+
+    <div class="marquee-bottom">
+        <marquee scrollamount="10">🎶 MOU KOI NANTE SHINAI NANTE IWANAI YO ZETTAI!!! 🎶</marquee>
+    </div>
+
+    <script>
+        function initOS() {
+            // Hitung Umur
+            const bday = new Date('2014-04-27'); 
+            const today = new Date();
+            let age = today.getFullYear() - bday.getFullYear();
+            if (today.getMonth() < 3 || (today.getMonth() === 3 && today.getDate() < 27)) age--;
+            document.getElementById('f-age').innerText = age;
+
+            // Hitung Hari Persahabatan
+            const start = new Date('2021-01-01');
+            const diff = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+            document.getElementById('timer-days').innerText = diff + " DAYS";
+        }
+
+        let screen = document.getElementById('screen');
+        function press(v) { if(screen.innerText === "0") screen.innerText = v; else screen.innerText += v; }
+        function clearCalc() { screen.innerText = "0"; }
+        function backspace() { screen.innerText = screen.innerText.slice(0, -1) || "0"; }
+
+        function calculate() {
+            if(screen.innerText === "27") {
+                document.getElementById('calc-group').style.display = 'none';
+                document.getElementById('easter-egg').style.display = 'block';
+            } else {
+                try { screen.innerText = eval(screen.innerText); } catch { screen.innerText = "Error"; }
+            }
+        }
+
+        function toggleCalc() {
+            let ui = document.getElementById('calc-ui');
+            if(ui.style.display === 'flex') {
+                ui.style.display = 'none';
+                document.getElementById('calc-group').style.display = 'block';
+                document.getElementById('easter-egg').style.display = 'none';
+            } else {
+                ui.style.display = 'flex';
+            }
+        }
+
+        let taps = 0;
+        function openVault() {
+            taps++;
+            if(taps === 3) {
+                let pw = prompt("KODE AKSES:");
+                if(pw === "251") document.getElementById('vault').style.display = 'block';
+                taps = 0;
+            }
+            setTimeout(() => { taps = 0; }, 2000);
+        }
+    </script>
+</body>
+</html>
