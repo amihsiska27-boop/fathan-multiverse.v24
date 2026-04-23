@@ -3,37 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FATHAN MULTIVERSE OS v13.0</title>
+    <title>FATHAN MULTIVERSE v24.0</title>
     <style>
-        :root { --green: #00ff41; --red: #ff0000; --blue: #00d4ff; --dark: #050505; --yellow: #ffea00; }
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--dark); font-family: 'Courier New', monospace; color: var(--green); overflow: hidden; }
+        :root { --green: #00ff41; --red: #ff0050; --cyan: #00f2ea; --dark: #050505; --yellow: #ffea00; --primary: var(--green); }
         
-        .scroll-area { 
-            position: absolute; top: 35px; bottom: 40px; width: 100%; overflow-y: auto; scrollbar-width: none;
-            display: flex; flex-direction: column; align-items: center;
-            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, #050505 90%), 
-                        url('https://images.alphacoders.com/153/153921.jpg') center/cover fixed;
+        body, html { margin: 0; padding: 0; height: 100%; background: var(--dark); font-family: 'Courier New', monospace; color: var(--primary); transition: 0.1s; overflow: hidden; }
+
+        /* TIKTOK GLITCH EFFECT */
+        body.shaman-active { background: #000; animation: shake 0.1s infinite; }
+        body.shaman-active .card, body.shaman-active .tool-btn, body.shaman-active h1 {
+            text-shadow: 2px 0 var(--red), -2px 0 var(--cyan); border-color: #fff !important;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px); }
+            50% { transform: translate(-1.5px, -1px); filter: contrast(180%) hue-rotate(90deg); }
+            100% { transform: translate(0, 0); }
         }
 
-        .content-container { width: 92%; max-width: 800px; padding: 20px 0; }
+        /* EFFECTS & SCREENS */
+        #flash-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: repeating-linear-gradient(45deg, #ff0000, #000 10%); }
+        
+        #forgotten-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; text-align: center; color: white; font-size: 1.1rem; font-style: italic; opacity: 0; transition: opacity 2s; padding: 20px; box-sizing: border-box;}
+        
+        #time-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000; justify-content: center; align-items: center; text-align: center; font-size: 1.5rem; font-weight: bold; color: white; padding: 20px; box-sizing: border-box; background: radial-gradient(circle at center, #8a2be2 0%, #000000 100%); animation: hollowPurple 2s infinite alternate; }
+        
+        @keyframes hollowPurple { 0% { filter: brightness(0.8); } 100% { filter: brightness(1.5) hue-rotate(20deg); } }
+        
+        .blink { animation: blinker 1s linear infinite; color: var(--red) !important; font-weight: bold; }
+        @keyframes blinker { 50% { opacity: 0; } }
 
-        /* Tools Header */
+        /* UI LAYOUT */
+        .scroll-area { position: absolute; top: 60px; bottom: 40px; width: 100%; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; align-items: center; }
+        .content-container { width: 92%; max-width: 800px; padding: 10px 0; }
+        .clock-section { position: fixed; top: 35px; width: 100%; text-align: center; z-index: 900; font-size: 11px; background: rgba(0,0,0,0.9); padding: 5px 0; border-bottom: 1px solid #222; color: #fff; }
+
         .top-tools { display: flex; justify-content: space-between; width: 100%; margin-bottom: 15px; }
-        .tool-btn { cursor:pointer; width: 45px; height: 45px; border: 1px solid var(--blue); border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); font-size: 20px; }
+        .tool-btn { cursor:pointer; width: 45px; height: 45px; border: 2px solid var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); font-size: 20px; transition: 0.3s; }
         
-        /* Search Bar */
-        .search-container { width: 100%; margin-bottom: 20px; }
-        .search-container input { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid var(--blue); background: rgba(0,0,0,0.8); color: white; outline: none; box-sizing: border-box; }
+        /* TIME STONE BUTTON HIDDEN BY DEFAULT */
+        #time-stone-btn { display: none; border-color: #00ff00; box-shadow: 0 0 10px #00ff00; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        .search-container input { width: 100%; padding: 12px; border-radius: 25px; border: 2px solid var(--primary); background: rgba(255,255,255,0.1); color: #fff; outline: none; box-sizing: border-box; }
         
-        /* App Shortcuts */
         .shortcut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
-        .app-btn { background: rgba(0,0,0,0.8); border: 1px solid var(--blue); color: #fff; padding: 12px 5px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; text-align: center; cursor: pointer; }
+        .app-btn { background: rgba(0,0,0,0.8); border: 1px solid var(--primary); color: #fff; padding: 12px 5px; border-radius: 8px; font-size: 0.65rem; font-weight: bold; text-align: center; text-decoration: none; overflow: hidden; }
 
-        /* Cards & Quotes */
-        .card { background: rgba(0, 0, 0, 0.9); border: 1px solid var(--green); padding: 15px; border-radius: 10px; margin-bottom: 12px; width: 100%; box-sizing: border-box; }
-        .info-line { margin: 5px 0; font-size: 0.85rem; color: #ccc; }
-        .info-line b { color: var(--green); }
+        .card { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--primary); padding: 15px; border-radius: 10px; margin-bottom: 12px; width: 100%; box-sizing: border-box; transition: 0.3s; }
 
+        /* Popups */
+        #calc-ui, #vault { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 3000; justify-content: center; align-items: center; flex-direction: column; }
+        .calc-box { background: #111; border: 2px solid #00d4ff; padding: 20px; border-radius: 15px; width: 280px; }
+        .calc-screen { width: 100%; height: 50px; background: #000; border: 1px solid #00d4ff; color: #00d4ff; text-align: right; padding: 10px; font-size: 1.5rem; margin-bottom: 10px; box-sizing: border-box; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .calc-grid button { padding: 15px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; cursor: pointer; }
+        
+        .marquee-top { position: fixed; top: 0; width: 100%; background: var(--yellow); color: black; padding: 6px 0; font-weight: bold; z-index: 1000; font-size: 11px; }
+        .marquee-bottom { position: fixed; bottom: 0; width: 100%; background: var(--red); color: white; padding: 8px 0; font-weight: bold; z-index: 1000; font-size: 12px; }
+    </style>
+</head>
+<body onload="initOS();">
+
+    <div id="flash-screen"></div>
+    <div id="forgotten-screen"><p>I'm still here, just forgotten. I decided to start a new life.</p></div>
+    <div id="time-screen"><p>We went back to the past and solved my problem and everything is fine now.</p></div>
+
+    <div class="marquee-top">
+        <marquee id="m-top">⚡ FATHAN MULTIVERSE // GRADE 6 // TASIKMALAYA ⚡</marquee>
+    </div>
+
+    <div class="clock-section">
+        <span id="c-date"></span> | <span id="c-time" style="color:var(--yellow); font-weight:bold;"></span>
+    </div>
+
+    <div class="scroll-area">
+        <div class="content-container">
+            <h1 id="brand" style="text-align: center; font-size: 1.3rem;">FATHAN MULTIVERSE</h1>
+            
+            <div class="top-tools">
+                <div class="tool-btn" onclick="toggleCalc()">🧮</div>
+                <div class="tool-btn" id="s-icon" style="border-color: var(--yellow);" onclick="toggleShaman()">👺</div>
+                <div class="tool-btn" style="border-color: var(--red);" onclick="openVault()">🕷️</div>
+                <div class="tool-btn" id="time-stone-btn" onclick="useTimeStone()">🟢</div>
+            </div>
+
+            <div class="search-container">
+                <form action="https://www.google.com/search" method="GET" target="_blank">
+                    <input type="text" name="q" placeholder="Cari di Google...">
+                </form>
+            </div>
+
+            <div class="shortcut-grid">
+                <a href="https://wa.me/" class="app-btn" id="btn-wa">WHATSAPP</a>
+                <a href="https://www.roblox.com/games" class="app-btn" id="btn-rb">ROBLOX</a>
+                <a href="https://www.youtube.com" class="app-btn" id="btn-yt">YOUTUBE</a>
+            </div>
+
+            <div class="card" style="text-align: center; border-style: dashed;">
+                <p id="q-txt" style="margin:0; font-size: 0.9rem; font-weight:bold;">"Jangan terlalu memikirkan masalah, tanpa melupakan masalah tersebut."</p>
+            </div>
+
+            <div class="card">
+                <div id="u-name" style="font-size: 0.8rem;">USER: <b>Muhammad Fathan Al Ghifari</b></div>
+                <div style="font-size: 0.8rem;">STATUS: <b id="st-txt" style="color:var(--yellow)">Fokus Belajar Ujian</b></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calc-ui">
+        <div class="calc-box">
+            <div id="calc-main">
+                <div class="calc-screen" id="screen">0</div>
+                <div class="calc-grid">
+                    <button onclick="cClear()">C</button><button onclick="cPress('/')">/</button><button onclick="cPress('*')">X</button><button onclick="cBack()">←</button>
+                    <button onclick="cPress('7')">7</button><button onclick="cPress('8')">8</button><button onclick="cPress('9')">9</button><button onclick="cPress('-')">-</button>
+                    <button onclick="cCalc()" style="grid-row: span 3; background: #00d4ff; color: black;">=</button>
+                    <button onclick="cPress('4')">4</button><button onclick="cPress('5')">5</button><button onclick="cPress('6')">6</button>
+                    <button onclick="cPress('1')">1</button><button onclick="cPress('2')">2</button><button onclick="cPress('3')">3</button>
+                    <button onclick="cPress('0')" style="grid-column: span 2;">0</button><button onclick="cPress('.')">.</button><button onclick="cPress('+')">+</button>
+                </div>
+                <button onclick="toggleCalc()" style="width:100%; margin-top:10px; background:none; color:white; border:1px solid #333;">TUTUP</button>
+            </div>
+            <div id="egg" style="display:none; color:white; font-size:12px; text-align:center;">
+                <h3 id="egg-title" style="color:#00d4ff">IDENTITY VERIFIED</h3>
+                <p id="egg-name">Muhammad Fathan (27-04-2014)</p>
+                <p id="egg-desc" style="font-style:italic">"Be mature, study hard."</p>
+                <button onclick="toggleCalc()" style="width:100%; padding:10px; background:#00d4ff; border:none; margin-top:10px;">EXIT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="vault" style="color:white; text-align:center; padding:20px;">
+        <h2 id="vault-title" style="color:var(--red);">TRIO FASEBIL</h2>
+        <div class="card" id="vault-card" style="border-color:var(--red); background:#000;">
+            <div id="days-count" style="color:var(--yellow); font-size: 1.8rem; font-weight:bold;"></div>
+            <p id="vault-names">Fathan • Shepia • Nabil</p>
+        </div>
+        <button onclick="document.getElementById('vault').style.display='none'" style="padding:15px; background:var(--red); color:white; border:none; font-weight:bold; width:80%;">TUTUP</button>
+    </div>
+
+    <div class="marquee-bottom">
+        <marquee scrollamount="10">🎶 MOU KOI NANTE SHINAI NANTE IWANAI YO ZETTAI!!! 🎶</marquee>
+    </div>
+
+    <script>
+        function updateTime() {
+            const n = new Date();
+            document.getElementById('c-date').innerText = n.toLocaleDateString('id-ID', {weekday:'short', day:'numeric', month:'short'}).toUpperCase();
+            document.getElementById('c-time').innerText = n.toLocaleTimeString('id-ID', {hour12:false});
+        }
+        setInterval(updateTime, 1000);
+
+        function initOS() {
+            updateTime();
+            const start = new Date('2021-01-01');
+            const diff = Math.floor((new Date() - start) / (1000*60*60*24));
+            document.getElementById('days-count').innerText = diff + " DAYS";
+        }
+
+        let isShaman = false;
+        let isUnstable = false;
+        let shamanTimeout, unstableInterval, unstableStopper, quoteInterval, scrambleInterval, rTimer, forgottenTimer;
+        let hasUsedShamanOnce = false;
+
+        const unstableQuotes = ["Where Are you now?", "I keep going without you", "The entire multiverse is missing Fathan", "Wherever you are back"];
+        const restoreQuotes = ["Continue Your Life", "I'm trapped in a paradoxical dimension", "Rest assured, Fathan will return", "Fathan is not here."];
+
+        function toggleShaman() {
+            if(isUnstable) return;
+            isShaman = !isShaman;
+            
+            if(isShaman) {
+                applyShamanUI();
+                if(hasUsedShamanOnce) {
+                    startUnstable();
+                } else {
+                    shamanTimeout = setTimeout(triggerCorruption, 60000); 
+                }
+            } else {
+                removeShamanUI();
+                clearTimeout(shamanTimeout);
+            }
+        }
+
+        function startUnstable() {
+            isUnstable = true;
+            let qIdx = 0;
+            
+            // TAMPILKAN TIME STONE SAAT UNSTABLE DIMULAI
+            document.getElementById('time-stone-btn').style.display = 'flex';
+
+            unstableInterval = setInterval(() => { document.body.classList.toggle('shaman-active'); }, 100);
+            
+            quoteInterval = setInterval(() => {
+                document.getElementById('q-txt').innerText = unstableQuotes[qIdx];
+                qIdx = (qIdx + 1) % unstableQuotes.length;
+            }, 2000);
+
+            scrambleInterval = setInterval(() => {
+                const chars = "ABCDEFHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
+                ["btn-wa", "btn-rb", "btn-yt"].forEach(id => {
+                    let r = ""; for(let i=0; i<8; i++) r += chars[Math.floor(Math.random()*chars.length)];
+                    document.getElementById(id).innerText = r;
+                });
+            }, 50);
+
+            unstableStopper = setTimeout(stopUnstableMode, 30000);
+        }
+
+        function triggerCorruption() {
+            document.getElementById('flash-screen').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('flash-screen').style.display = 'none';
+                removeShamanUI();
+                isShaman = false;
+                hasUsedShamanOnce = true;
+            }, 1000);
+        }
+
+        function stopUnstableMode() {
+            clearInterval(unstableInterval);
+            clearInterval(quoteInterval);
+            clearInterval(scrambleInterval);
+            isUnstable = false;
+            isShaman = false;
+            removeShamanUI();
+            
+            document.getElementById('btn-wa').innerText = "WHATSAPP";
+            document.getElementById('btn-rb').innerText = "ROBLOX";
+            document.getElementById('btn-yt').innerText = "YOUTUBE";
+
+            let rIdx = 0;
+            rTimer = setInterval(() => {
+                document.getElementById('q-txt').innerText = restoreQuotes[rIdx];
+                if(rIdx === 3) {
+                    clearInterval(rTimer);
+                    triggerMissingPhase();
+                }
+                rIdx++;
+            }, 4000);
+        }
+
+        function triggerMissingPhase() {
+            document.getElementById('u-name').innerHTML = "USER: <b>-</b>";
+            document.getElementById('st-txt').innerHTML = '<span class="blink">Missing</span>';
+            
+            forgottenTimer = setTimeout(() => {
+                let fs = document.getElementById('forgotten-screen');
+                fs.style.display = 'flex';
+                setTimeout(() => fs.style.opacity = '1', 100);
+                
+                setTimeout(() => {
+                    fs.style.opacity = '0';
+                    setTimeout(() => fs.style.display = 'none', 2000);
+                }, 4000);
+            }, 5000);
+        }
+
+        function applyShamanUI() {
+            document.body.classList.add('shaman-active');
+            document.getElementById('m-top').innerText = "💀 SYSTEM ERROR // FATHAN DISCONNECTED 💀";
+            document.getElementById('st-txt').innerHTML = "CORRUPTED";
+            document.getElementById('u-name').innerHTML = "USER: <b>Only Fathan, but not Fathan</b>";
+            document.getElementById('s-icon').innerText = "💀";
+        }
+
+        function removeShamanUI() {
+            document.body.classList.remove('shaman-active');
+            document.getElementById('m-top').innerText = "⚡ FATHAN MULTIVERSE // ONLINE ⚡";
+            document.getElementById('st-txt').innerText = "Fokus Belajar Ujian";
+            document.getElementById('u-name').innerHTML = "USER: <b>Muhammad Fathan Al Ghifari</b>";
+            document.getElementById('s-icon').innerText = "👺";
+            document.getElementById('q-txt').innerText = '"Jangan terlalu memikirkan masalah, tanpa melupakan masalah tersebut."';
+        }
+
+        function useTimeStone() {
+            clearInterval(unstableInterval); clearInterval(quoteInterval); clearInterval(scrambleInterval);
+            clearInterval(rTimer); clearTimeout(unstableStopper); clearTimeout(forgottenTimer); clearTimeout(shamanTimeout);
+            
+            let ts = document.getElementById('time-screen');
+            ts.style.display = 'flex';
+            
+            setTimeout(() => {
+                ts.style.display = 'none';
+                
+                // SEMBUNYIKAN KEMBALI TIME STONE SETELAH RESET
+                document.getElementById('time-stone-btn').style.display = 'none';
+                
+                isShaman = false;
+                isUnstable = false;
+                hasUsedShamanOnce = false;
+                removeShamanUI();
+                
+                document.getElementById('btn-wa').innerText = "WHATSAPP";
+                document.getElementById('btn-rb').innerText = "ROBLOX";
+                document.getElementById('btn-yt').innerText = "YOUTUBE";
+                document.getElementById('u-name').innerHTML = "USER: <b>Muhammad Fathan Al Ghifari</b>";
+                document.getElementById('st-txt').innerText = "Fokus Belajar Ujian";
+                document.getElementById('q-txt').innerText = '"Jangan terlalu memikirkan masalah, tanpa melupakan masalah tersebut."';
+                document.getElementById('m-top').innerText = "⚡ FATHAN MULTIVERSE // GRADE 6 // TASIKMALAYA ⚡";
+                
+            }, 4500); 
+        }
+
+        // Kalkulator & Vault
+        let scr = document.getElementById('screen');
+        function cPress(v) { if(scr.innerText==="0") scr.innerText=v; else scr.innerText+=v; }
+        function cClear() { scr.innerText="0"; }
+        function cBack() { scr.innerText = scr.innerText.slice(0,-1) || "0"; }
+        function cCalc() {
+            if(scr.innerText==="27") {
+                document.getElementById('calc-main').style.display='none';
+                document.getElementById('egg').style.display='block';
+                if(isUnstable) {
+                    document.getElementById('egg-title').innerText = "DEVIL MUTATION";
+                    document.getElementById('egg-title').style.color = "red";
+                    document.getElementById('egg-name').innerText = "FATHAN";
+                    document.getElementById('egg-desc').innerText = "I Will be mutated And devil.";
+                    document.getElementById('egg-desc').style.color = "red";
+                }
+            } else { try { scr.innerText = eval(scr.innerText); } catch { scr.innerText="Error"; } }
+        }
+
+        function toggleCalc() {
+            let u = document.getElementById('calc-ui');
+            u.style.display = (u.style.display==='flex') ? 'none' : 'flex';
+            document.getElementById('calc-main').style.display='block';
+            document.getElementById('egg').style.display='none';
+        }
+
+        function openVault() {
+            let p = prompt("KODE:");
+            if(p==="251") {
+                const names = document.getElementById('vault-names');
+                if(isUnstable) { names.innerText = "WE ARE NOT A BEST FRIEND"; names.style.color = "red"; }
+                else { names.innerText = "Fathan • Shepia • Nabil"; names.style.color = "white"; }
+                document.getElementById('vault').style.display='flex';
+            }
+        }
+    </script>
+</body>
+</html>
         .fathan-quotes { 
             background: rgba(0, 255, 65, 0.1); border: 2px dashed var(--green); padding: 18px; border-radius: 10px; text-align: center; margin-bottom: 15px; 
         }
